@@ -1,0 +1,120 @@
+***** DeedsMcE Project File *****
+* If you read this message, you need to install the last version of Deeds! *
+FVR 3
+SYS 2
+CPU 1
+FCK 2
+ROM 4
+RAM 4
+PIA 0
+PIB 1
+PIC 2
+PID 3
+PIE 4
+PIF 5
+PIG 6
+PIH 7
+POA 0
+POB 1
+POC 2
+POD 3
+POE 4
+POF 5
+POG 6
+POH 7
+INT 007 SRC 002 PRT 000 TMD 001 TIN 019 EIN 003 
+INT 006 SRC 002 PRT 000 TMD 001 TIN 019 EIN 003 
+INT 005 SRC 002 PRT 000 TMD 001 TIN 019 EIN 003 
+INT 004 SRC 002 PRT 000 TMD 001 TIN 019 EIN 003 
+INT 003 SRC 002 PRT 000 TMD 001 TIN 019 EIN 003 
+INT 002 SRC 002 PRT 000 TMD 001 TIN 019 EIN 003 
+INT 001 SRC 002 PRT 000 TMD 001 TIN 019 EIN 003 
+INT 000 SRC 002 PRT 000 TMD 001 TIN 019 EIN 003 
+******* Project File END ********
+IA_ADDR     EQU 00h
+OA_ADDR     EQU 00h
+
+ON_MASK     EQU 01h      ; OA0
+OFF_MASK    EQU 00h
+
+STATE       EQU 0E000h   ; RAM: 00h=OFF, 01h=ON
+
+        ORG 0000h
+
+START:
+        LD   A,00h
+        LD   (STATE),A
+        OUT  (OA_ADDR),A
+
+MAIN:
+        IN   A,(IA_ADDR)
+
+        ; DISABLE has priority (IA1)
+        BIT  1,A
+        JP   NZ,SET_OFF
+
+        ; ENABLE (IA0)
+        BIT  0,A
+        JP   NZ,SET_ON
+
+        ; No button pressed -> hold previous state
+        LD   A,(STATE)
+        OUT  (OA_ADDR),A
+        JP   MAIN
+
+SET_ON:
+        LD   A,01h
+        LD   (STATE),A
+        LD   A,ON_MASK
+        OUT  (OA_ADDR),A
+        JP   MAIN
+
+SET_OFF:
+        LD   A,00h
+        LD   (STATE),A
+        LD   A,OFF_MASK
+        OUT  (OA_ADDR),A
+        JP   MAINIA_ADDR     EQU 00h
+OA_ADDR     EQU 00h
+
+ON_MASK     EQU 01h      ; OA0
+OFF_MASK    EQU 00h
+
+STATE       EQU 0E000h   ; RAM: 00h=OFF, 01h=ON
+
+        ORG 0000h
+
+START:
+        LD   A,00h
+        LD   (STATE),A
+        OUT  (OA_ADDR),A
+
+MAIN:
+        IN   A,(IA_ADDR)
+
+        ; DISABLE has priority (IA1)
+        BIT  1,A
+        JP   NZ,SET_OFF
+
+        ; ENABLE (IA0)
+        BIT  0,A
+        JP   NZ,SET_ON
+
+        ; No button pressed -> hold previous state
+        LD   A,(STATE)
+        OUT  (OA_ADDR),A
+        JP   MAIN
+
+SET_ON:
+        LD   A,01h
+        LD   (STATE),A
+        LD   A,ON_MASK
+        OUT  (OA_ADDR),A
+        JP   MAIN
+
+SET_OFF:
+        LD   A,00h
+        LD   (STATE),A
+        LD   A,OFF_MASK
+        OUT  (OA_ADDR),A
+        JP   MAIN
